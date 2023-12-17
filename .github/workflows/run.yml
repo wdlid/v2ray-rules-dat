@@ -33,6 +33,7 @@ jobs:
       - name: Checkout the "hidden" branch of this repo
         uses: actions/checkout@v4
         with:
+          repository: Loyalsoldier/v2ray-rules-dat
           ref: hidden
 
       - name: Checkout Loyalsoldier/domain-list-custom
@@ -157,6 +158,7 @@ jobs:
           cat ./gfwlist2dnsmasq/temp-gfwlist.txt | perl -ne '/^((?=^.{3,255})[a-zA-Z0-9][-_a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-_a-zA-Z0-9]{0,62})+)/ && print "$1\n"' >> ./community/data/gfw
           cat ./community/data/gfw | sort --ignore-case -u > gfw.txt
           cat ./community/data/greatfire | sort --ignore-case -u > greatfire.txt
+          sed -i "/googlefcm/d" ./community/data/google
           curl -sSL $WIN_SPY | grep "0.0.0.0" | awk '{print $2}' > ./community/data/win-spy
           curl -sSL $WIN_SPY | grep "0.0.0.0" | awk '{print $2}' > win-spy.txt
           curl -sSL $WIN_UPDATE | grep "0.0.0.0" | awk '{print $2}' > ./community/data/win-update
@@ -185,7 +187,7 @@ jobs:
       - name: Release and upload assets
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.v2raytoken }}
           release_name: ${{ env.RELEASE_NAME }}
           tag: ${{ env.TAG_NAME }}
           file_glob: true
@@ -200,7 +202,7 @@ jobs:
           git checkout -b release
           git add .
           git commit -m "${{ env.RELEASE_NAME }}"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.v2raytoken }}@github.com/${{ github.repository }}"
           git push -f -u origin release
 
       - name: Purge jsdelivr CDN
